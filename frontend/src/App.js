@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { TextField, Button, Container, Typography } from '@mui/material';
 import './App.css';
 
 
@@ -21,7 +22,8 @@ function App() {
   }
 };
 
-return (
+
+/* return (
   <div className="App">
     <h1>Book a tutoring session</h1>
     <form onSubmit={handleSubmit}>
@@ -40,7 +42,51 @@ return (
       <button type="submit">Book</button>
     </form>
   </div>
-);
+); */
+
+
+return (
+  <Container className="App">
+    <Typography variant="h4" component="h1" gutterBottom>
+      Book a Tutoring Session
+    </Typography>
+    <form onSubmit={handleSubmit}>
+      <TextField
+        label="Name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        margin="normal"
+        required
+        fullWidth
+      />
+      <TextField
+        label="Email"
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        margin="normal"
+        required
+        fullWidth
+      />
+      <TextField
+        label="Date"
+        type="datetime-local"
+        value={date}
+        onChange={(e) => setDate(e.target.value)}
+        margin="normal"
+        required
+        fullWidth
+        InputLabelProps={{
+          shrink: true,
+        }}
+      />
+      <Button type="submit" variant="contained" color="primary">
+        Book
+      </Button>
+    </form>
+  </Container>
+  );
 }
+
 
 export default App;

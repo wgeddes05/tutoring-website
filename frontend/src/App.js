@@ -8,16 +8,32 @@ function App() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [date, setDate] = useState('');
+  const [alternatives, setAlternatives] = useState([]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleCheckAvailability = async () => {
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/api/check_availability/', { date });
+      console.log("Availability response: ", response.data);
+      if (response.data.available) {
+        handleSubmit();
+      } else {
+        setAlternatives(response.data.alternatives);
+      }
+    } catch (error) {
+      console.error('Availability check error: ', error);
+      alert('Error checking availability');
+    }
+  };
+
+  const handleSubmit = async () => {
+    /*e.preventDefault();*/
     const booking = { name, email, date };
     try {
       const response = await axios.post('http://127.0.0.1:8000/api/bookings/', booking);
       console.log(response.data);
       alert('Booking created successfully!');
     } catch (error) {
-      console.error(error);
+      console.error('Booking error: ', error);
       alert('Error creating booking');
   }
 };
@@ -50,7 +66,10 @@ return (
     <Typography variant="h4" component="h1" gutterBottom>
       Book a Tutoring Session
     </Typography>
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={(e) => {
+      e.preventDefault();
+      handleCheckAvailability();
+    }}>
       <TextField
         label="Name"
         value={name}
@@ -81,9 +100,21 @@ return (
         }}
       />
       <Button type="submit" variant="contained" color="primary">
-        Book
+        Check Availability
       </Button>
     </form>
+    {alternatives.length > 0 && (
+      <div>
+        <Typography variant="h6" component="h2" gutterBottom>
+          The selected time is not available. Please consider the following alternative time slots:
+        </Typography>
+        <ul>
+          {alternatives.map((alt, index) => (
+            <li key={index}>{new Date(alt).toLocaleString()}</li>
+          ))}
+        </ul>
+      </div>
+    )}
   </Container>
   );
 }
